@@ -1,5 +1,6 @@
 # nowPlaying
-For MPD/MPC: Gives you a notification on play/pause and song change
+For MPD/MPC: Gives you a notification on play/pause and song change.
+85 lines of bash...
 
 # Installation
 Run install.sh
