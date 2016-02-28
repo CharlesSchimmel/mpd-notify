@@ -36,17 +36,16 @@ returnSong () {
 
         # Compare old and new status.
         if [[ $curStatus != $newStatus ]]; then
-            # notify-send "$newStatus" -t 25
             if [[ $newStatus -eq 0 ]]; then
-                notify-send "Paused" -t 25
+                notify-send "Paused" -t 1000
             else
-                notify-send "Playing" -t 25
+                notify-send "Playing" -t 1000
             fi
         fi
         
         # Compare old and new songs.
         if [[ $curSong != $newSong ]]; then
-            notify-send "$newSong" -t 50
+            notify-send "$newSong" -t 1000
         fi
 
     done
