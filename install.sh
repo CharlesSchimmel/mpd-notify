@@ -26,5 +26,5 @@ else
     #make a softlink from the app location to the bin location
     ln -s $APP $BINLOC
 
-    echo "Run 'nowPlaying' to run. Daemon in development."
+    echo "Run 'nowPlaying' to run. Please edit the two variables in $APP"
 fi
