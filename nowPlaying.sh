@@ -1,10 +1,7 @@
 #!/bin/bash
 
-MUSFOLDER="$HOME/Music/" # Your music directory as you defined for MPD
-AUTOSCRAPE=false # Will automatically pull missing covers from discogs. Assumes your music folder is in Music/Artist/Album format.
 APP="$HOME/.nowPlaying"
-PORT=6600 # In case you don't use the default port.
-NOTIFTIME=1500 # in milliseconds
+source "$APP/nowPlaying.cfg"
 
 # Just get the currently playing song.
 getSong () {
