@@ -1,5 +1,6 @@
 #!/bin/bash
 APP=$HOME/.nowPlaying/
+CONFIG=$APP/nowPlaying.cfg
 BINLOC=/usr/local/bin/nowPlaying
 
 if [[ "$(id -u)" != "0" ]]; then
@@ -27,5 +28,12 @@ else
     #make a softlink from the app location to the bin location
     ln -s "$APP"nowPlaying.sh $BINLOC
 
-    echo "Run 'nowPlaying' to run.  Please edit MUSFOLDER variable in $APP/nowPlaying.sh If you wish to use the automatic cover fetcher, you must edit $APP/cogsCover.py and add your own key/secret and change AUTOSCRAPE=true in $APP/nowPlaying.sh"
+    if ! [[ -e $CONFIG ]]; then
+        echo "Copying config..."
+        cp -p nowPlaying.cfg $CONFIG
+    else
+        cp -p nowPlaying.cfg $CONFIG.default
+    fi
+
+    echo "Run 'nowPlaying' to run. Please edit the config file at $CONFIG"
 fi
