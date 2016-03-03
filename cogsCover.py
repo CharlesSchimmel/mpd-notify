@@ -49,6 +49,6 @@ def discogsSearch(albumTitle,discogsKey,discogsSecret):
         return "HTTP Error: {}".format(r.status_code)
 
 if len(argv) >= 1:
-    print(discogsSearch(argv[0]))
+    print(discogsSearch(argv[0]),discogsKey,discogsSecret)
 else:
     pass
