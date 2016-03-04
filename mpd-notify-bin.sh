@@ -1,5 +1,6 @@
 #!/bin/bash
 # Just get the currently playing song.
+
 getSong () {
     ct=0 
     mpc -p $PORT | while read line; do
@@ -33,15 +34,15 @@ getArtAlb () {
 
 scrapeDiscogs () {
     artAlb=`getArtAlb`
-    python3.4 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"
-    cp /tmp/image.jpg "$coverPath" 2>&1
-    rm /tmp/image.jpg 2>&1
-    echo "Scraping..."
+    log python3.4 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"
+    cp /tmp/image.jpg "$coverPath" >/dev/null 2>&1
+    rm /tmp/image.jpg >/dev/null 2>&1
+    log "Scraping..."
     if [[ -e $coverPath ]]; then
-        echo "Scraping successful."
+        log "Scraping $artAlb successful."
         notify-send -i "$coverPath" "$newSong" -t "$NOTIFTIME"
     else
-        echo "Scraping failed."
+        log "Scraping $artAlb failed."
         notify-send -i audio-headphones "$newSong" -t "$NOTIFTIME"
     fi 
 }

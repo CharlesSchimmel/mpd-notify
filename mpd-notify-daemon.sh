@@ -1,17 +1,11 @@
 #!/bin/bash
 
 daemonName="mpd-notify"
-
 APP="$HOME/.mpd-notify"
 source "$APP/mpd-notify.cfg"
 source "$APP/mpd-notify-bin.sh"
-
 pidFile="$APP/$daemonName.pid"
-logFile="$APP/$daemonName.log"
-logMaxSize=1024
 runInterval=1
-
-
 
 myPid=`echo $$`
 
@@ -131,8 +125,8 @@ loop () {
     songPath=`getFile | sed -r 's/\/[^/]*$//'`
     coverPath=$MUSFOLDER$songPath"/cover.jpg"
     
-    log `notifyStatus`
-    log `notifySong`
+    notifyStatus
+    notifySong
 
     loop
 }
@@ -140,6 +134,7 @@ loop () {
 log () {
     echo "$1" >> "$logFile"
 }
+
 
 ##################
 #    ArgParse    #
