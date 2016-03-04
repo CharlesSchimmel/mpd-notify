@@ -1,19 +1,12 @@
 #!/bin/bash
-<<<<<<< HEAD
 APP=$HOME/.mpd-notify/
 CONFIG="$APP"mpd-notify.cfg
 BINLOC=/usr/local/bin/mpd-notify
-=======
-APP=$HOME/.nowPlaying/
-CONFIG=$APP/nowPlaying.cfg
-BINLOC=/usr/local/bin/nowPlaying
->>>>>>> 1a02ab89acafea9d1a579d81d4dc2387a2f7db43
 
 if [[ "$(id -u)" != "0" ]]; then
     echo "You must be root to install this script." 1>&2
     exit 1
 else
-<<<<<<< HEAD
     echo "This will install 'mpd-notify'"
     echo "Checking dependencies..."
 
@@ -35,11 +28,6 @@ else
         echo "Done."
     fi
     echo "Requests found."
-=======
-    echo "This will install 'nowPlaying'"
-    echo "[[ENTER]] to confirm"
-    read confirm
->>>>>>> 1a02ab89acafea9d1a579d81d4dc2387a2f7db43
 
     #check if app location exists; only make it if it exists
     if ! [[ -e $APP ]]; then
@@ -47,12 +35,8 @@ else
     fi
 
     #cp will overwrite
-<<<<<<< HEAD
     cp -p mpd-notify-bin.sh $APP
     cp -p mpd-notify-daemon.sh $APP
-=======
-    cp -p nowPlaying.sh $APP
->>>>>>> 1a02ab89acafea9d1a579d81d4dc2387a2f7db43
     cp -p cogsCover.py $APP
 
     #if there's already something in the bin location, delete it
@@ -61,7 +45,6 @@ else
     fi
 
     #make a softlink from the app location to the bin location
-<<<<<<< HEAD
     ln -s "$APP"mpd-notify-daemon.sh $BINLOC
 
     if ! [[ -e $CONFIG ]]; then
@@ -72,16 +55,4 @@ else
     fi
 
     echo "Run 'mpd-notify start' to run. Please edit the config file at $CONFIG"
-=======
-    ln -s "$APP"nowPlaying.sh $BINLOC
-
-    if ! [[ -e $CONFIG ]]; then
-        echo "Copying config..."
-        cp -p nowPlaying.cfg $CONFIG
-    else
-        cp -p nowPlaying.cfg $CONFIG.default
-    fi
-
-    echo "Run 'nowPlaying' to run. Please edit the config file at $CONFIG"
->>>>>>> 1a02ab89acafea9d1a579d81d4dc2387a2f7db43
 fi

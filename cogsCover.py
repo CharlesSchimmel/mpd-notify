@@ -4,13 +4,8 @@ import requests,json,random,shutil
 from sys import argv
 argv = argv[1:]
 
-<<<<<<< HEAD
-discogsKey = argv[1]
-discogsSecret = argv[2]
-=======
 discogsKey = ""
 discogsSecret = ""
->>>>>>> 1a02ab89acafea9d1a579d81d4dc2387a2f7db43
 
 def discogsSearch(albumTitle,discogsKey,discogsSecret):
     headers = {'user-agent':'cogsCoverScraper 0.1','Authorization':'Discogs key={},secret={}'.format(discogsKey,discogsSecret)}
@@ -54,10 +49,6 @@ def discogsSearch(albumTitle,discogsKey,discogsSecret):
         return "HTTP Error: {}".format(r.status_code)
 
 if len(argv) >= 1:
-<<<<<<< HEAD
     print(discogsSearch(argv[0],discogsKey,discogsSecret))
-=======
-    print(discogsSearch(argv[0]),discogsKey,discogsSecret)
->>>>>>> 1a02ab89acafea9d1a579d81d4dc2387a2f7db43
 else:
     pass
