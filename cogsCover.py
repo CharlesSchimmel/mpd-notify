@@ -4,8 +4,8 @@ import requests,json,random,shutil
 from sys import argv
 argv = argv[1:]
 
-discogsKey = ""
-discogsSecret = ""
+discogsKey = argv[1]
+discogsSecret = argv[2]
 
 def discogsSearch(albumTitle,discogsKey,discogsSecret):
     headers = {'user-agent':'cogsCoverScraper 0.1','Authorization':'Discogs key={},secret={}'.format(discogsKey,discogsSecret)}

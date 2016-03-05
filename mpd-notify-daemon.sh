@@ -100,29 +100,31 @@ checkDaemon() {
 
 loop () {
     # Just get the song title and artist.
-    curSong=`getSong`
+    currentSong=`mpc -p $PORT`
+    currTitleArtist=`getFirst "$currentSong"`
 
     # Via mpc call and awk, get the status of mpd. For some reason, comparing the two as strings would not work. Converting their status to integers and comparing those, does.
-    if [[ `mpc -p $PORT | awk '/\[(paused|playing)\]/ {print $1}'` == "[playing]" ]]; then
+    if [[ `echo "$currentSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[playing]" ]]; then
         curStatus=1
-    elif [[ `mpc -p $PORT | awk '/\[(paused|playing)\]/ {print $1}'` == "[paused]" ]]; then
+    elif [[ `echo "$currentSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[paused]" ]]; then
         curStatus=0
     fi
 
     # zzz
     sleep 1
 
-    # Just get the song title and artist.
-    newSong=`getSong`
+    newSong=`mpc -p $PORT`
+    newTitleArtist=`getFirst "$newSong"`
 
-    if [[ `mpc -p $PORT | awk '/\[(paused|playing)\]/ {print $1}'` == "[playing]" ]]; then
+    if [[ `echo "$newSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[playing]" ]]; then
         newStatus=1
-    elif [[ `mpc -p $PORT | awk '/\[(paused|playing)\]/ {print $1}'` == "[paused]" ]]; then
+    elif [[ `echo "$newSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[paused]" ]]; then
         newStatus=0
     fi
 
     # Get the path of the currently playing song as well as the cover.
     songPath=`getFile | sed -r 's/\/[^/]*$//'`
+    coverPath=$MUSFOLDER$songPath"/cover.jpg"
     coverPath=$MUSFOLDER$songPath"/cover.jpg"
     
     notifyStatus
