@@ -1,11 +1,8 @@
 # mpd-notify
-For MPD/MPC: Gives you a notification and album art on play/pause and song change.
+For MPD/MPC: Gives you a notification and album art on play/pause and song change. Also optionally scrapes missing album art.
 
 ## Installation
-Run install.sh. Use 'mpd-notify start & disown' to start.
+Run install.sh and edit the config at $HOME/.mpd-notify/mpd-notify.cfg.
 
 ### Dependencies
-Python3, MPD, MPC, notify-osd, and nofity-send.
-
-## It takes forever for the notifications to disappear.
-Notify-osd doens't respect timing, install something like <a href="https://launchpad.net/~leolik/+archive/ubuntu/leolik">leolik's notify-osd.</a>
+Python3, MPD, MPC, notify-osd, and nofity-send. Recommend <a href="https://launchpad.net/~leolik/+archive/ubuntu/leolik">leolik's notify-osd.</a>
