@@ -8,5 +8,5 @@ Run install.sh and edit the config at $HOME/.mpd-notify/mpd-notify.cfg.
 Python3, MPD, MPC, notify-osd, and nofity-send. Recommend <a href="https://launchpad.net/~leolik/+archive/ubuntu/leolik">leolik's notify-osd.</a>
 
 ### Screenshot
-!(screenshots/screenshot1.png)
+![Screenshot](screenshots/screenshot1.png?raw=true)
 
