@@ -36,6 +36,7 @@ scrapeDiscogs () {
     artAlb=`getArtAlb`
     log "Scraping..."
     log "`python3.4 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"`"
+    # cogsCover downloads to /tmp/image....
     cp /tmp/image.jpg "$coverPath" >/dev/null 2>&1
     rm /tmp/image.jpg >/dev/null 2>&1
 }
@@ -57,13 +58,30 @@ notifyStatus () {
     fi
 }
 
+findCover () {
+    # FutureFeature: Potentially search for any image file and convert it to JPG with imagemagick.
+        # Would require either additional dependency or inline missing dependency check similar to the following method:
+    # Attempt to find a cover. Set coverPath to null so we can check if it found anything
+    coverPath=
+    # Look for a jpg in the album folder
+    for file in $MUSFOLDER$albumPath*; do
+        if [[ $file == *".jpg" ]]; then
+            coverPath=$file
+        fi
+    done
+
+        # If nothing found, set coverPath to what it should be so we can pass it off to the discogs scraper.
+        if [[ -z "$coverPath" ]]; then
+            coverPath=$MUSFOLDER$albumPath"cover.jpg"
+        fi
+}
+
 notifySong () {
     # Compare old and new songs.
     if [[ $currTitleArtist != $newTitleArtist ]]; then
+        findCover
         if [[ -e $coverPath ]]; then
             notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
-        elif [[ -e $folderPath ]]; then
-            notify-send -i "$folderPath" "$newTitleArtist" -t "$NOTIFTIME"
         else
             # If there's no cover available and autoscrape is true, try to get it
             if [[ $AUTOSCRAPE == "true" ]]; then
@@ -84,7 +102,7 @@ notifySong () {
 
 # currently implemented in the daemon loop, this function is not needed and is a redundancy liability.
 notify () { 
-    # Just get the song title and artist.
+    # Get the full MPC output so we can use it for both the status and the current song.
     currentSong=`mpc -p $PORT`
     currTitleArtist=`getFirst "$currentSong"`
 
@@ -105,10 +123,9 @@ notify () {
     fi
 
     # Get the path of the currently playing song as well as the cover.
-    songPath=`getFile | sed -r 's/\/[^/]*$//'`
-    coverPath=$MUSFOLDER$songPath"/cover.jpg"
-    folderPath=$MUSFOLDER$songPath"/folder.jpg"
+    albumPath=`getFile | sed -r 's/\/[^/]*$//'`"/"
     
-    notifyStatus
     notifySong
+    notifyStatus
 }
+

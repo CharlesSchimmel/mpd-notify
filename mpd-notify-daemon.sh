@@ -123,9 +123,9 @@ loop () {
     fi
 
     # Get the path of the currently playing song as well as the cover.
-    songPath=`getFile | sed -r 's/\/[^/]*$//'`
-    coverPath=$MUSFOLDER$songPath"/cover.jpg"
-    coverPath=$MUSFOLDER$songPath"/cover.jpg"
+    albumPath=`getFile | sed -r 's/\/[^/]*$//'`"/"
+
+    findCover
     
     notifyStatus
     notifySong

@@ -21,14 +21,28 @@ else
 
     # Check if requests is installed
     sudo -H pip3 show requests >/dev/null 2>&1
-    if [[ $? -ne 0 ]] && [[ ! -d "$APP"requests ]]; then
-        echo -n"Requests and/or pip3 not installed. I'll put it in the install folder for you."
-        # wget -O /tmp/requests.tar.gz https://pypi.python.org/packages/source/r/requests/requests-2.9.1.tar.gz >/dev/null 2>&1
-        wget -nv -O /tmp/requests.tar.gz https://pypi.python.org/packages/source/r/requests/requests-2.9.1.tar.gz 
-        # tar xfz /tmp/requests.tar.gz >/dev/null 2>&1
-        tar xfz /tmp/requests.tar.gz -C /tmp /dev/null 2>&1
-        cp -r /tmp/requests-2.9.1/requests $APP >/dev/null 2>&1
-        echo "Done."
+    if [[ $? -ne 0 ]]; then # Either pip3 isn't installed or requests isn't installed.
+        # Check if pip3 is installed
+        pip3 --version >/dev/null 2>&1
+        if [[ $? -ne 0 ]]; then
+            echo "Requests and pip3 not installed. Please install it before proceeding."
+        else
+            # Pip3 is installed but not requests. Get requests. 
+            echo -n "Requests not found, may I install it through Pip3 for you? [Y/n]"
+            read response
+            if [[ -z $response || $response == "Y" || $response == "y" ]]; then
+                sudo -H pip3 install requests >/dev/null 2>&1
+                if [[ $? -eq 0 ]]; then
+                    echo "Requests installed, proceeding."
+                else
+                    echo "Unable to install requests, please install it before continuing."
+                    exit 1
+                fi
+            else
+                echo "Unable to install requests, please install it before continuing."
+                exit 1
+            fi
+        fi
     else
         echo -n "Requests found..."
     fi
