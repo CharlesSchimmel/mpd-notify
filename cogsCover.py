@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 
+# Omg don't even look at this nasty code.
+
 import requests,json,random,shutil
 from sys import argv
 argv = argv[1:]
 
+albumTitle = argv[0]
 discogsKey = argv[1]
 discogsSecret = argv[2]
+blackList = open("blacklist.txt").readlines() # Albums to not scrape art for. If scraping fails, the album will be added to the blacklist.
 
 def discogsSearch(albumTitle,discogsKey,discogsSecret):
     headers = {'user-agent':'cogsCoverScraper 0.1','Authorization':'Discogs key={},secret={}'.format(discogsKey,discogsSecret)}
@@ -35,12 +39,18 @@ def discogsSearch(albumTitle,discogsKey,discogsSecret):
                                 shutil.copyfileobj(r.raw,f)
                             return "Successfully fetched a cover."
                         else:
+                            with open("blackList.txt", "a") as bl:
+                                bl.write(albumTitle)
                             return "No image available."
 
                 else:
+                    with open("blackList.txt", "a") as bl:
+                        bl.write(albumTitle)
                     return "No image available."
 
             else:
+                with open("blackList.txt", "a") as bl:
+                    bl.write(albumTitle)
                 return "HTTP Error: {}".format(r.status_code)
         except:
             return "No release available."
@@ -49,6 +59,9 @@ def discogsSearch(albumTitle,discogsKey,discogsSecret):
         return "HTTP Error: {}".format(r.status_code)
 
 if len(argv) >= 1:
-    print(discogsSearch(argv[0],discogsKey,discogsSecret))
+    if albumTitle not in blackList:
+        print(discogsSearch(albumTitle,discogsKey,discogsSecret))
+    else:
+        print("{} in blackList, not attempting to scrape.")
 else:
     pass

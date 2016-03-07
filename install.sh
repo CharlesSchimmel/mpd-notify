@@ -56,6 +56,7 @@ else
     cp -p mpd-notify-bin.sh $APP
     cp -p mpd-notify-daemon.sh $APP
     cp -p cogsCover.py $APP
+    cp -p blackList.txt $APP
 
     #if there's already something in the bin location, delete it
     if [[ -e $BINLOC ]]; then
