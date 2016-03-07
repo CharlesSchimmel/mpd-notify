@@ -8,7 +8,7 @@ if [[ "$(id -u)" != "0" ]]; then
     exit 1
 else
     echo "This will install 'mpd-notify'"
-    echo "Checking dependencies..."
+    echo -n "Checking dependencies..."
 
     #Check if python3 installed
     python3 --version >/dev/null 2>&1
@@ -28,7 +28,7 @@ else
             echo "Requests and pip3 not installed. Please install it before proceeding."
         else
             # Pip3 is installed but not requests. Get requests. 
-            echo -n "Requests not found, may I install it through Pip3 for you? [Y/n]"
+            echo -n "Requests not found, may I install it for you? [Y/n]"
             read response
             if [[ -z $response || $response == "Y" || $response == "y" ]]; then
                 sudo -H pip3 install requests >/dev/null 2>&1
