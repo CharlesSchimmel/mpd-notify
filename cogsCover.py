@@ -9,7 +9,7 @@ argv = argv[1:]
 albumTitle = argv[0]
 discogsKey = argv[1]
 discogsSecret = argv[2]
-blackList = open("blacklist.txt").readlines() # Albums to not scrape art for. If scraping fails, the album will be added to the blacklist.
+doNotScrape = open("doNotScrape.txt").readlines() # Albums to not scrape art for. If scraping fails, the album will be added to the doNotScrape.
 
 def discogsSearch(albumTitle,discogsKey,discogsSecret):
     headers = {'user-agent':'cogsCoverScraper 0.1','Authorization':'Discogs key={},secret={}'.format(discogsKey,discogsSecret)}
@@ -39,17 +39,17 @@ def discogsSearch(albumTitle,discogsKey,discogsSecret):
                                 shutil.copyfileobj(r.raw,f)
                             return "Successfully fetched a cover."
                         else:
-                            with open("blackList.txt", "a") as bl:
+                            with open("doNotScrape.txt", "a") as bl:
                                 bl.write(albumTitle)
                             return "No image available."
 
                 else:
-                    with open("blackList.txt", "a") as bl:
+                    with open("doNotScrape.txt", "a") as bl:
                         bl.write(albumTitle)
                     return "No image available."
 
             else:
-                with open("blackList.txt", "a") as bl:
+                with open("doNotScrape.txt", "a") as bl:
                     bl.write(albumTitle)
                 return "HTTP Error: {}".format(r.status_code)
         except:
@@ -59,9 +59,9 @@ def discogsSearch(albumTitle,discogsKey,discogsSecret):
         return "HTTP Error: {}".format(r.status_code)
 
 if len(argv) >= 1:
-    if albumTitle not in blackList:
+    if albumTitle not in doNotScrape:
         print(discogsSearch(albumTitle,discogsKey,discogsSecret))
     else:
-        print("{} in blackList, not attempting to scrape.")
+        print("{} in doNotScrape, not attempting to scrape.")
 else:
     pass
