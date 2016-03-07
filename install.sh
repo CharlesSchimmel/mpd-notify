@@ -8,13 +8,37 @@ if [[ "$(id -u)" != "0" ]]; then
     exit 1
 else
     echo "This will install 'mpd-notify'"
-    echo -n "Checking dependencies..."
+    echo "Checking dependencies:"
+
+    mpd --version >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "mpd not installed. Please install it and try again."
+        exit 1
+    else
+        echo -n "mpd found..."
+    fi
+
+    mpc -v >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "mpc not installed. Please install it and try again."
+        exit 1
+    else
+        echo -n "mpc found..."
+    fi
+
+    notify-send -v >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "Notify-send not installed. Please install it and try again."
+        exit 1
+    else
+        echo -n "notify-send found..."
+    fi
 
     #Check if python3 installed
     python3 --version >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
-        echo "Python3 is not installed. It is required for this script."
-        exit 1
+        echo "Python3 is not installed. It is necessary for auto-fetching artwork."
+        echo "If you wish to enable that functionality, please install Python3 and run this again."
     else
         echo -n "Python3 found..."
     fi
@@ -25,7 +49,8 @@ else
         # Check if pip3 is installed
         pip3 --version >/dev/null 2>&1
         if [[ $? -ne 0 ]]; then
-            echo "Requests and pip3 not installed. Please install it before proceeding."
+            echo "Pip3 is not installed. It is necessary for auto-fetching artwork."
+            echo "If you wish to enable that functionality, please install Pip3 and run this again."
         else
             # Pip3 is installed but not requests. Get requests. 
             echo -n "Requests not found, may I install it for you? [Y/n]"
@@ -35,12 +60,12 @@ else
                 if [[ $? -eq 0 ]]; then
                     echo "Requests installed, proceeding."
                 else
-                    echo "Unable to install requests, please install it before continuing."
-                    exit 1
+                    echo "Requests is not installed. It is necessary for auto-fetching artwork."
+                    echo "If you wish to enable that functionality, please install Requests and run this again."
                 fi
             else
-                echo "Unable to install requests, please install it before continuing."
-                exit 1
+                echo "Requests is not installed. It is necessary for auto-fetching artwork."
+                echo "If you wish to enable that functionality, please install Requests and run this again."
             fi
         fi
     else
@@ -74,5 +99,5 @@ else
     fi
 
     echo "Done."
-    echo "Run 'mpd-notify start' to run. Please edit the config file at $CONFIG"
+    echo "Please edit the config file at $CONFIG and run 'mpd-notify start & disown' to run. "
 fi
