@@ -4,14 +4,10 @@
 
 import requests,json,random,shutil
 from sys import argv
-argv = argv[1:]
+from os import path
 
-albumTitle = argv[0]
-discogsKey = argv[1]
-discogsSecret = argv[2]
-doNotScrape = open("doNotScrape.txt").readlines() # Albums to not scrape art for. If scraping fails, the album will be added to the doNotScrape.
 
-def discogsSearch(albumTitle,discogsKey,discogsSecret):
+def discogsSearch(albumTitle,discogsKey,discogsSecret,doNotFetchPath):
     headers = {'user-agent':'cogsCoverScraper 0.1','Authorization':'Discogs key={},secret={}'.format(discogsKey,discogsSecret)}
     searchURL = 'https://api.discogs.com/database/search?q={}&title'.format(albumTitle)
 
@@ -39,29 +35,37 @@ def discogsSearch(albumTitle,discogsKey,discogsSecret):
                                 shutil.copyfileobj(r.raw,f)
                             return "Successfully fetched a cover."
                         else:
-                            with open("doNotScrape.txt", "a") as bl:
+                            with open(doNotFetchPath, "a") as bl:
                                 bl.write(albumTitle)
                             return "No image available."
 
                 else:
-                    with open("doNotScrape.txt", "a") as bl:
+                    with open(doNotFetchPath, "a") as bl:
                         bl.write(albumTitle)
                     return "No image available."
 
             else:
-                with open("doNotScrape.txt", "a") as bl:
+                with open(doNotFetchPath, "a") as bl:
                     bl.write(albumTitle)
                 return "HTTP Error: {}".format(r.status_code)
         except:
+            with open(doNotFetchPath, "a") as bl:
+                bl.write(albumTitle)
             return "No release available."
 
     else:
         return "HTTP Error: {}".format(r.status_code)
 
+argv = argv[1:]
+albumTitle = argv[0]
+discogsKey = argv[1]
+discogsSecret = argv[2]
+doNotFetchPath = path.expanduser("~/.mpd-notify/doNotFetch.txt")
+doNotFetch = open(doNotFetchPath).read().splitlines() # Albums to not scrape art for. If scraping fails, the album will be added to the doNotFetch.
 if len(argv) >= 1:
-    if albumTitle not in doNotScrape:
-        print(discogsSearch(albumTitle,discogsKey,discogsSecret))
+    if albumTitle not in doNotFetch:
+        print(discogsSearch(albumTitle,discogsKey,discogsSecret,doNotFetchPath))
     else:
-        print("{} in doNotScrape, not attempting to scrape.")
+        print("{} in doNotFetch, not attempting to scrape.")
 else:
     pass

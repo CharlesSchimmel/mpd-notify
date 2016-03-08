@@ -34,7 +34,7 @@ done
 
 scrapeDiscogs () {
     artAlb=`getArtAlb`
-    log "Scraping..."
+    log "Fetching..."
     log "`python3.4 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"`"
     # cogsCover downloads to /tmp/image....
     cp /tmp/image.jpg "$coverPath" >/dev/null 2>&1
@@ -64,33 +64,51 @@ findCover () {
     # Attempt to find a cover. Set coverPath to null so we can check if it found anything
     coverPath=
     # Look for a jpg in the album folder
+    maxFile=
+    maxRes=
     for file in "$MUSFOLDER$albumPath"*; do
         if [[ "$file" == *".jpg" ]]; then
-            coverPath=$file
+            curRes=`identify -format "%W" "$file"`
+            if [[ -z $maxFile ]]; then
+                maxFile="$file"
+                maxRes="$curRes"
+            elif [[ $curRes -gt $maxRes ]]; then
+                maxFile="$file"
+                maxRes="$curRes"
+            fi
         fi
+        coverPath="$maxFile"
     done
 
-    # If nothing found, set coverPath to what it should be so we can pass it off to the discogs scraper.
+    # If nothing found, set coverPath the fetcher expects
     if [[ -z "$coverPath" ]]; then
         coverPath=$MUSFOLDER$albumPath"cover.jpg"
     fi
 }
+
+setWallpaper () {
+    if [[ $WALLPAPER = true ]]; then
+        feh --bg-tile "$coverPath"
+    fi
+} 
 
 notifySong () {
     # Compare old and new songs.
     if [[ $currTitleArtist != $newTitleArtist ]]; then
         findCover
         if [[ -e $coverPath ]]; then
+            setWallpaper
             notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
         else
             # If there's no cover available and autoscrape is true, try to get it
             if [[ $AUTOSCRAPE == "true" ]]; then
                 scrapeDiscogs
                 if [[ -e $coverPath ]]; then
-                    log "Scraping \"$artAlb\" was successful."
+                    setWallpaper
+                    log "Fetching \"$artAlb\" was successful."
                     notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
                 else
-                    log "Scraping $artAlb failed."
+                    log "Fetching $artAlb failed."
                     notify-send -i audio-headphones "$newTitleArtist" -t "$NOTIFTIME"
                 fi 
             else
