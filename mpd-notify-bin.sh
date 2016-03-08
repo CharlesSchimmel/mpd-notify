@@ -49,8 +49,6 @@ notifyStatus () {
         else
             if [[ -e $coverPath ]]; then
                 notify-send -i "$coverPath" "Playing" "$newTitleArtist" -t "$NOTIFTIME"
-            elif [[ -e $folderPath ]]; then
-                notify-send -i "$folderPath" "Playing" "$newTitleArtist" -t "$NOTIFTIME"
             else
                 notify-send -i audio-headphones "Playing" "$newTitleArtist" -t "$NOTIFTIME"
             fi
@@ -63,11 +61,13 @@ findCover () {
         # Would require either additional dependency or inline missing dependency check similar to the following method:
     # Attempt to find a cover. Set coverPath to null so we can check if it found anything
     coverPath=
-    # Look for a jpg in the album folder
+    # Reset triggers
     maxFile=
     maxRes=
+    # Look for a jpg in the album folder
     for file in "$MUSFOLDER$albumPath"*; do
         if [[ "$file" == *".jpg" ]]; then
+            # Check size of image if it's larger, set it as current largest.
             curRes=`identify -format "%W" "$file"`
             if [[ -z $maxFile ]]; then
                 maxFile="$file"
@@ -77,16 +77,21 @@ findCover () {
                 maxRes="$curRes"
             fi
         fi
+        # set coverpath to path of largest image
         coverPath="$maxFile"
     done
 
-    # If nothing found, set coverPath the fetcher expects
+    # If nothing found, set coverPath the fetcher expects then call the fetcher
     if [[ -z "$coverPath" ]]; then
         coverPath=$MUSFOLDER$albumPath"cover.jpg"
+        if [[ $AUTOSCRAPE = true ]]; then
+            scrapeDiscogs
+        fi
     fi
 }
 
 setWallpaper () {
+    # Does what it says on the tin
     if [[ $WALLPAPER = true ]]; then
         feh --bg-tile "$coverPath"
     fi
@@ -96,24 +101,11 @@ notifySong () {
     # Compare old and new songs.
     if [[ $currTitleArtist != $newTitleArtist ]]; then
         findCover
-        if [[ -e $coverPath ]]; then
+        if [[ -e $coverPath ]]; then # If there's a cover...
             setWallpaper
             notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
         else
-            # If there's no cover available and autoscrape is true, try to get it
-            if [[ $AUTOSCRAPE == "true" ]]; then
-                scrapeDiscogs
-                if [[ -e $coverPath ]]; then
-                    setWallpaper
-                    log "Fetching \"$artAlb\" was successful."
-                    notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
-                else
-                    log "Fetching $artAlb failed."
-                    notify-send -i audio-headphones "$newTitleArtist" -t "$NOTIFTIME"
-                fi 
-            else
-                notify-send -i audio-headphones "$newTitleArtist" -t "$NOTIFTIME"
-            fi 
+            notify-send -i audio-headphones "$newTitleArtist" -t "$NOTIFTIME"
         fi 
     fi 
 }

@@ -41,6 +41,13 @@ else
         echo -n "imagemagick found..."
     fi
 
+    feh --version >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo "feh not installed. It is necessary for setting wallpaper. If you wish to enable this function please install it and try again."
+    else
+        echo -n "imagemagick found..."
+    fi
+
     #Check if python3 installed
     python3 --version >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
