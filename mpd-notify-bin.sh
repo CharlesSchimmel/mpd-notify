@@ -64,16 +64,16 @@ findCover () {
     # Attempt to find a cover. Set coverPath to null so we can check if it found anything
     coverPath=
     # Look for a jpg in the album folder
-    for file in $MUSFOLDER$albumPath*; do
-        if [[ $file == *".jpg" ]]; then
+    for file in "$MUSFOLDER$albumPath"*; do
+        if [[ "$file" == *".jpg" ]]; then
             coverPath=$file
         fi
     done
 
-        # If nothing found, set coverPath to what it should be so we can pass it off to the discogs scraper.
-        if [[ -z "$coverPath" ]]; then
-            coverPath=$MUSFOLDER$albumPath"cover.jpg"
-        fi
+    # If nothing found, set coverPath to what it should be so we can pass it off to the discogs scraper.
+    if [[ -z "$coverPath" ]]; then
+        coverPath=$MUSFOLDER$albumPath"cover.jpg"
+    fi
 }
 
 notifySong () {
