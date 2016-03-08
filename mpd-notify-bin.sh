@@ -78,8 +78,8 @@ findCover () {
             fi
         fi
         # set coverpath to path of largest image
-        coverPath="$maxFile"
     done
+    coverPath="$maxFile"
 
     # If nothing found, set coverPath the fetcher expects then call the fetcher
     if [[ -z "$coverPath" ]]; then
@@ -88,12 +88,13 @@ findCover () {
             scrapeDiscogs
         fi
     fi
+    log "Found $coverPath for $artAlb"
 }
 
 setWallpaper () {
     # Does what it says on the tin
     if [[ $WALLPAPER = true ]]; then
-        feh --bg-tile "$coverPath"
+        feh --bg-tile "$coverPath" >> "$logFile"
     fi
 } 
 
@@ -102,8 +103,8 @@ notifySong () {
     if [[ $currTitleArtist != $newTitleArtist ]]; then
         findCover
         if [[ -e $coverPath ]]; then # If there's a cover...
-            setWallpaper
             notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
+            setWallpaper
         else
             notify-send -i audio-headphones "$newTitleArtist" -t "$NOTIFTIME"
         fi 
