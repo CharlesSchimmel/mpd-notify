@@ -34,7 +34,7 @@ done
 
 scrapeDiscogs () {
     artAlb=`getArtAlb`
-    log "Fetching..."
+    log "Fetching $artAlb"
     log "`python3.4 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"`"
     # cogsCover downloads to /tmp/image....
     cp /tmp/image.jpg "$coverPath" >/dev/null 2>&1
@@ -79,6 +79,7 @@ findCover () {
         fi
         # set coverpath to path of largest image
     done
+    # If there are no jpgs, maxfile will be null and thus coverpath will be null
     coverPath="$maxFile"
 
     # If nothing found, set coverPath the fetcher expects then call the fetcher
@@ -88,7 +89,6 @@ findCover () {
             scrapeDiscogs
         fi
     fi
-    log "Found $coverPath for $artAlb"
 }
 
 setWallpaper () {
@@ -103,6 +103,7 @@ notifySong () {
     if [[ $currTitleArtist != $newTitleArtist ]]; then
         findCover
         if [[ -e $coverPath ]]; then # If there's a cover...
+            log "Found $coverPath for $newTitleArtist"
             notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
             setWallpaper
         else
