@@ -64,8 +64,8 @@ doNotFetchPath = path.expanduser("~/.mpd-notify/doNotFetch.txt")
 doNotFetch = open(doNotFetchPath).read().splitlines() # Albums to not scrape art for. If scraping fails, the album will be added to the doNotFetch.
 if len(argv) >= 1:
     if albumTitle not in doNotFetch:
-        print(discogsSearch(albumTitle,discogsKey,discogsSecret,doNotFetchPath))
+        print("Fetching {}...".format(albumTitle),discogsSearch(albumTitle,discogsKey,discogsSecret,doNotFetchPath))
     else:
-        print("{} in doNotFetch, not attempting to scrape.")
+        print("{} in doNotFetch, not attempting to fetch.")
 else:
     pass

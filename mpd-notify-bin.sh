@@ -34,7 +34,7 @@ done
 
 scrapeDiscogs () {
     artAlb=`getArtAlb`
-    log "Fetching $artAlb"
+    log "Sendingg $artAlb to cogsCover"
     log "`python3.4 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"`"
     # cogsCover downloads to /tmp/image....
     cp /tmp/image.jpg "$coverPath" >/dev/null 2>&1
@@ -77,9 +77,9 @@ findCover () {
                 maxRes="$curRes"
             fi
         fi
-        # set coverpath to path of largest image
     done
     # If there are no jpgs, maxfile will be null and thus coverpath will be null
+    # set coverpath to path of largest image
     coverPath="$maxFile"
 
     # If nothing found, set coverPath the fetcher expects then call the fetcher
@@ -93,8 +93,14 @@ findCover () {
 
 setWallpaper () {
     # Does what it says on the tin
+    # Get resolution, might return value for all monitors, not just the current one. W/e
+    curRes=`xdpyinfo | grep dimensions | grep -E -o "   .+x" | sed -r 's/x.+?$//' | sed -r 's/^.+[^0-9]//g'` 
     if [[ $WALLPAPER = true ]]; then
-        feh --bg-tile "$coverPath" >> "$logFile"
+        if [[ $maxRes -ge $curRes ]]; then
+            feh --bg-scale "$coverPath" >> "$logFile"
+        else
+            feh --bg-tile "$coverPath" >> "$logFile"
+        fi
     fi
 } 
 
