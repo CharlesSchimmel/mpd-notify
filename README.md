@@ -1,9 +1,9 @@
 # mpd-notify
-Notifications on song change, play, and pause.
-Automatic cover art detection\*
-Automatic cover art fetching
-Updates wallpaper on song change
-Daemon
++Notifications on song change, play, and pause.
++Automatic cover art detection\*
++Automatic cover art fetching
++Updates wallpaper on song change
++Daemon
 
 \* This only works if you have seperate folders for every album. But you're not some sort of monster, right?
 
