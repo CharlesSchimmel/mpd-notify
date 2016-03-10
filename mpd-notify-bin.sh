@@ -34,7 +34,6 @@ done
 
 scrapeDiscogs () {
     artAlb=`getArtAlb`
-    log "Sendingg $artAlb to cogsCover"
     log "`python3.4 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"`"
     # cogsCover downloads to /tmp/image....
     cp /tmp/image.jpg "$coverPath" >/dev/null 2>&1
@@ -66,7 +65,7 @@ findCover () {
     maxRes=
     # Look for a jpg in the album folder
     for file in "$MUSFOLDER$albumPath"*; do
-        if [[ "$file" == *".jpg" ]]; then
+        if [[ "$file" == *".jpg" ]] || [[ "$file" == *".jpeg" ]]; then
             # Check size of image if it's larger, set it as current largest.
             curRes=`identify -format "%W" "$file"`
             if [[ -z $maxFile ]]; then
@@ -97,9 +96,9 @@ setWallpaper () {
     curRes=`xdpyinfo | grep dimensions | grep -E -o "   .+x" | sed -r 's/x.+?$//' | sed -r 's/^.+[^0-9]//g'` 
     if [[ $WALLPAPER = true ]]; then
         if [[ $maxRes -ge $curRes ]]; then
-            feh --bg-scale "$coverPath" >> "$logFile"
+            feh --bg-scale "$coverPath" >/dev/null 2>&1
         else
-            feh --bg-tile "$coverPath" >> "$logFile"
+            feh --bg-tile "$coverPath" >/dev/null 2>&1
         fi
     fi
 } 

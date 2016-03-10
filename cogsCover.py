@@ -36,21 +36,21 @@ def discogsSearch(albumTitle,discogsKey,discogsSecret,doNotFetchPath):
                             return "Successfully fetched a cover."
                         else:
                             with open(doNotFetchPath, "a") as bl:
-                                bl.write(albumTitle)
+                                bl.write(albumTitle + "\n")
                             return "No image available."
 
                 else:
                     with open(doNotFetchPath, "a") as bl:
-                        bl.write(albumTitle)
+                        bl.write(albumTitle + "\n")
                     return "No image available."
 
             else:
                 with open(doNotFetchPath, "a") as bl:
-                    bl.write(albumTitle)
+                    bl.write(albumTitle + "\n")
                 return "HTTP Error: {}".format(r.status_code)
         except:
             with open(doNotFetchPath, "a") as bl:
-                bl.write(albumTitle)
+                bl.write(albumTitle + "\n")
             return "No release available."
 
     else:

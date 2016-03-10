@@ -14,15 +14,27 @@ setupDaemon() {
         touch "$logFile"
     else
         # Check to see if we need to rotate the logs.
-        size=$((`ls -l "$logFile" | cut -d " " -f 8`/1024))
+        size=$((`ls -l "$logFile" | cut -d " " -f 5`/1024))
         if [[ $size -gt $logMaxSize ]]; then
             mv $logFile "$logFile.old"
             touch "$logFile"
         fi
     fi
+    mpc -p $PORT >/dev/null 2>&1
+    if [[ $? -ne 0 ]]; then
+        echo -n "MPD not running. Attempting to start..."
+        mpd
+        if [[ $? -ne 0 ]]; then
+            echo "Unable to start MPD. Please do it yourself then start mpd-notify."
+        else
+            echo "Done."
+        fi
+    fi
+
 }
 
 startDaemon () {
+
     setupDaemon
     if [[ "`checkDaemon`" -eq 1 ]]; then
         echo "ERROR: $daemonName is already running."
@@ -63,7 +75,7 @@ statusDaemon () {
 restartDaemon () {
     if [[ "`checkDaemon`" -eq 0 ]]; then
         echo "$daemonName isn't running."
-        exit 1
+        startDaemon
     fi
     stopDaemon
     startDaemon
