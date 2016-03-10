@@ -1,0 +1,1 @@
+volume: n/a repeat: off random: on single: off consume: off

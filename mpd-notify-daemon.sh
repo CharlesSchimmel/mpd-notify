@@ -137,8 +137,6 @@ loop () {
     # Get the path of the currently playing song as well as the cover.
     albumPath=`getFile | sed -r 's/\/[^/]*$//'`"/"
 
-    findCover
-    
     notifyStatus
     notifySong
 

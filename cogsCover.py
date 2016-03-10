@@ -66,6 +66,6 @@ if len(argv) >= 1:
     if albumTitle not in doNotFetch:
         print("Fetching {}...".format(albumTitle),discogsSearch(albumTitle,discogsKey,discogsSecret,doNotFetchPath))
     else:
-        print("{} in doNotFetch, not attempting to fetch.")
+        print("{} in doNotFetch, not attempting to fetch.".format(albumTitle))
 else:
     pass

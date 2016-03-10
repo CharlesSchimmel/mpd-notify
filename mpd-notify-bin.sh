@@ -65,7 +65,7 @@ findCover () {
     maxRes=
     # Look for a jpg in the album folder
     for file in "$MUSFOLDER$albumPath"*; do
-        if [[ "$file" == *".jpg" ]] || [[ "$file" == *".jpeg" ]]; then
+        if [[ "$file" == *".jpg" ]] || [[ "$file" == *".jpeg" ]] || [[ "$file" == *".png" ]]; then
             # Check size of image if it's larger, set it as current largest.
             curRes=`identify -format "%W" "$file"`
             if [[ -z $maxFile ]]; then
@@ -77,9 +77,17 @@ findCover () {
             fi
         fi
     done
+
     # If there are no jpgs, maxfile will be null and thus coverpath will be null
     # set coverpath to path of largest image
     coverPath="$maxFile"
+
+    # Convert png to jpg for notification icon.
+    if [[ "$coverPath" == *".png" ]]; then
+        newPath=`echo $coverPath | sed 's/png/jpg/g'`
+        convert "$coverPath" "$newPath"
+        coverPath=$newPath
+    fi
 
     # If nothing found, set coverPath the fetcher expects then call the fetcher
     if [[ -z "$coverPath" ]]; then
@@ -93,6 +101,7 @@ findCover () {
 setWallpaper () {
     # Does what it says on the tin
     # Get resolution, might return value for all monitors, not just the current one. W/e
+    # If image resolution is greater than or equal to monitor resolution, scale not tile.
     curRes=`xdpyinfo | grep dimensions | grep -E -o "   .+x" | sed -r 's/x.+?$//' | sed -r 's/^.+[^0-9]//g'` 
     if [[ $WALLPAPER = true ]]; then
         if [[ $maxRes -ge $curRes ]]; then
@@ -108,7 +117,6 @@ notifySong () {
     if [[ $currTitleArtist != $newTitleArtist ]]; then
         findCover
         if [[ -e $coverPath ]]; then # If there's a cover...
-            log "Found $coverPath for $newTitleArtist"
             notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
             setWallpaper
         else
