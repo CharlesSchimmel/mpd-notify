@@ -1,4 +1,4 @@
-# mpd-notify V 1.0
+# mpd-notify v0.1
 + Notifications on song change, play, and pause.
 + Automatic cover art detection\*
 + Automatic cover art fetching
