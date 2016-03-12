@@ -122,6 +122,8 @@ loop () {
         curStatus=0
     fi
 
+    curVol=`echo "$currentSong" | grep -o -E "volume.+?%"`
+
     # zzz
     sleep 1
 
@@ -133,12 +135,14 @@ loop () {
     elif [[ `echo "$newSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[paused]" ]]; then
         newStatus=0
     fi
+    newVol=`echo "$newSong" | grep -o -E "volume.+?%" `
 
     # Get the path of the currently playing song as well as the cover.
     albumPath=`getFile | sed -r 's/\/[^/]*$//'`"/"
 
     notifyStatus
     notifySong
+    notifyVolume
 
     loop
 }

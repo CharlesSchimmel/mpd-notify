@@ -56,11 +56,9 @@ notifyStatus () {
 }
 
 findCover () {
-    # FutureFeature: Potentially search for any image file and convert it to JPG with imagemagick.
-        # Would require either additional dependency or inline missing dependency check similar to the following method:
     # Attempt to find a cover. Set coverPath to null so we can check if it found anything
-    coverPath=
     # Reset triggers
+    coverPath=
     maxFile=
     maxRes=
     # Look for a jpg in the album folder
@@ -123,6 +121,12 @@ notifySong () {
             notify-send -i audio-headphones "$newTitleArtist" -t "$NOTIFTIME"
         fi 
     fi 
+}
+
+notifyVolume () {
+    if [[ $curVol != $newVol ]]; then
+        notify-send "$newVol" -t "$NOTIFTIME"
+    fi
 }
 
 # currently implemented in the daemon loop, this function is not needed and is a redundancy liability.
