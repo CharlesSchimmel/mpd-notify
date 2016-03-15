@@ -18,7 +18,7 @@ else
         echo -n "mpd found..."
     fi
 
-    mpc -v >/dev/null 2>&1
+    mpc version >/dev/null 2>&1
     if [[ $? -ne 0 ]]; then
         echo "mpc not installed. Please install it and try again."
         exit 1
