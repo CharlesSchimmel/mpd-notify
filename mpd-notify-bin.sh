@@ -34,7 +34,7 @@ done
 
 scrapeDiscogs () {
     artAlb=`getArtAlb`
-    log "`python3.4 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"`"
+    log "`python3 "$APP""/cogsCover.py" "$artAlb" "$DISCOGSKEY" "$DISCOGSSECRET"`"
     # cogsCover downloads to /tmp/image....
     cp /tmp/image.jpg "$coverPath" >/dev/null 2>&1
     rm /tmp/image.jpg >/dev/null 2>&1
