@@ -115,10 +115,14 @@ notifySong () {
     if [[ $currTitleArtist != $newTitleArtist ]]; then
         findCover
         if [[ -e $coverPath ]]; then # If there's a cover...
-            notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
             setWallpaper
+            if $NOTIFYSONG ; then
+                notify-send -i "$coverPath" "$newTitleArtist" -t "$NOTIFTIME"
+            fi
         else
-            notify-send -i audio-headphones "$newTitleArtist" -t "$NOTIFTIME"
+            if $NOTIFYSONG ; then
+                notify-send -i audio-headphones "$newTitleArtist" -t "$NOTIFTIME"
+            fi
         fi 
     fi 
 }
