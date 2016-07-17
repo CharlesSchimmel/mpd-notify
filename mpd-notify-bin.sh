@@ -42,14 +42,16 @@ scrapeDiscogs () {
 
 notifyStatus () {
     # Compare old and new status.
-    if [[ $curStatus != $newStatus ]]; then
-        if [[ $newStatus -eq 0 ]]; then
-            notify-send -i audio-headphones "Paused" -t "$NOTIFTIME"
-        else
-            if [[ -e $coverPath ]]; then
-                notify-send -i "$coverPath" "Playing" "$newTitleArtist" -t "$NOTIFTIME"
+    if $STATUSNOTIF ; then
+        if [[ $curStatus != $newStatus ]]; then
+            if [[ $newStatus -eq 0 ]]; then
+                notify-send -i audio-headphones "Paused" -t "$NOTIFTIME"
             else
-                notify-send -i audio-headphones "Playing" "$newTitleArtist" -t "$NOTIFTIME"
+                if [[ -e $coverPath ]]; then
+                    notify-send -i "$coverPath" "Playing" "$newTitleArtist" -t "$NOTIFTIME"
+                else
+                    notify-send -i audio-headphones "Playing" "$newTitleArtist" -t "$NOTIFTIME"
+                fi
             fi
         fi
     fi
@@ -90,7 +92,7 @@ findCover () {
     # If nothing found, set coverPath the fetcher expects then call the fetcher
     if [[ -z "$coverPath" ]]; then
         coverPath=$MUSFOLDER$albumPath"cover.jpg"
-        if [[ $AUTOSCRAPE = true ]]; then
+        if $AUTOSCRAPE; then
             scrapeDiscogs
         fi
     fi
@@ -101,11 +103,17 @@ setWallpaper () {
     # Get resolution, might return value for all monitors, not just the current one. W/e
     # If image resolution is greater than or equal to monitor resolution, scale not tile.
     curRes=`xdpyinfo | grep dimensions | grep -E -o "   .+x" | sed -r 's/x.+?$//' | sed -r 's/^.+[^0-9]//g'` 
-    if [[ $WALLPAPER = true ]]; then
+    dimensions=$(xdpyinfo | grep dimensions | awk '{print $2}')
+    if $WALLPAPER ; then
         if [[ $maxRes -ge $curRes ]]; then
             feh --bg-scale "$coverPath" >/dev/null 2>&1
         else
-            feh --bg-tile "$coverPath" >/dev/null 2>&1
+            if $CENTERED; then
+                convert "$coverPath" -gravity center -background "#$MATCOLOR" -extent $dimensions "/tmp/cover.jpg"
+                feh --bg-center "/tmp/cover.jpg" >/dev/null 2>&1
+            else
+                feh --bg-tile "$coverPath" >/dev/null 2>&1
+            fi
         fi
     fi
 } 
@@ -132,33 +140,3 @@ notifyVolume () {
         notify-send "$newVol" -t "$NOTIFTIME"
     fi
 }
-
-# currently implemented in the daemon loop, this function is not needed and is a redundancy liability.
-notify () { 
-    # Get the full MPC output so we can use it for both the status and the current song.
-    currentSong=`mpc -p $PORT`
-    currTitleArtist=`getFirst "$currentSong"`
-
-    # Via mpc call and awk, get the status of mpd. For some reason, comparing the two as strings would not work. Converting their status to integers and comparing those, does.
-    if [[ `echo "$currentSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[playing]" ]]; then
-        curStatus=1
-    elif [[ `echo "$currentSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[paused]" ]]; then
-        curStatus=0
-    fi
-
-    newSong=`mpc -p $PORT`
-    newTitleArtist=`getFirst "$newSong"`
-
-    if [[ `echo "$newSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[playing]" ]]; then
-        newStatus=1
-    elif [[ `echo "$newSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[paused]" ]]; then
-        newStatus=0
-    fi
-
-    # Get the path of the currently playing song as well as the cover.
-    albumPath=`getFile | sed -r 's/\/[^/]*$//'`"/"
-    
-    notifySong
-    notifyStatus
-}
-
