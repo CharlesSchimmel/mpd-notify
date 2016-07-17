@@ -161,6 +161,9 @@ if [ -f "$pidFile" ]; then
 fi
 checkDaemon
 case "$1" in
+    "")
+      startDaemon
+      ;;
     start)
         startDaemon
         ;;
