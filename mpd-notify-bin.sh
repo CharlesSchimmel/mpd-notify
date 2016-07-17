@@ -109,8 +109,14 @@ setWallpaper () {
             feh --bg-scale "$coverPath" >/dev/null 2>&1
         else
             if $CENTERED; then
-                convert "$coverPath" -gravity center -background "#$MATCOLOR" -extent $dimensions "/tmp/cover.jpg"
-                feh --bg-center "/tmp/cover.jpg" >/dev/null 2>&1
+                if $COMMON; then
+                    commonColor="$(convert "$coverPath" +dither -colors 1 -unique-colors txt:- | grep -Eo "#.{6}" | tail -n 1)"
+                    convert "$coverPath" -gravity center -background "$commonColor" -extent $dimensions "/tmp/cover.jpg"
+                    feh --bg-center "/tmp/cover.jpg" > /dev/null 2>&1
+                else
+                    convert "$coverPath" -gravity center -background "#$MATCOLOR" -extent $dimensions "/tmp/cover.jpg"
+                    feh --bg-center "/tmp/cover.jpg" >/dev/null 2>&1
+                fi
             else
                 feh --bg-tile "$coverPath" >/dev/null 2>&1
             fi
