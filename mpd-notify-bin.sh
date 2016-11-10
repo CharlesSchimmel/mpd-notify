@@ -3,33 +3,13 @@
 
 # Get the currently playing filename
 getFile () {
-    ct=0 
-    mpc -p $PORT -f %file% | while read line; do
-        if [[ $ct -eq 0 ]]; then
-            echo $line
-        fi
-        ((ct++))
-    done
+    file="$(mpc -p $PORT -f %file% | head -n 1 )"
+    albumPath="$(echo "$file" | sed 's/$(basename "$file")//')"
+    mpc -p $PORT -f %file% | head -n 1 
 }
 
 getArtAlb () {
-    ct=0 
-    mpc -p $PORT -f "%artist% - %album%" | while read line; do
-        if [[ $ct -eq 0 ]]; then
-            echo $line
-        fi
-        ((ct++))
-    done
-}
-
-getFirst () {
-    ct=0
-    echo "$1" | while read line; do
-    if [[ $ct -eq 0 ]]; then
-        echo $line
-    fi
-    ((ct++))
-done
+    mpc -p $PORT -f "%artist% - %album%" | head -n 1
 }
 
 scrapeDiscogs () {
@@ -110,7 +90,7 @@ setWallpaper () {
         else
             if $CENTERED; then
                 if $COMMON; then
-                    commonColor="$(convert "$coverPath" +dither -colors 1 -unique-colors txt:- | grep -Eo "#.{6}" | tail -n 1)"
+                    commonColor="$(convert "$coverPath" -colors 2 -depth 8 -unique-colors -format "%c" histogram:info: | grep -Eo "#.{6}" | tail -n 1)"
                     convert "$coverPath" -gravity center -background "$commonColor" -extent $dimensions "/tmp/cover.jpg"
                     feh --bg-center "/tmp/cover.jpg" > /dev/null 2>&1
                 else
@@ -119,6 +99,7 @@ setWallpaper () {
                 fi
             else
                 feh --bg-tile "$coverPath" >/dev/null 2>&1
+                # /bin/bash ~/.scripts/genparpal.sh "$coverPath"
             fi
         fi
     fi

@@ -2,6 +2,7 @@
 APP=$HOME/.mpd-notify/
 CONFIG="$APP"mpd-notify.cfg
 BINLOC=/usr/local/bin/mpd-notify
+OPT=/opt/mpd-notify
 
 if [ "$(id -u)" == "0" ]; then
 	echo "Don't use sudo for this script or it'll install into root's HOME"
@@ -10,45 +11,44 @@ else
     echo "This will install 'mpd-notify'"
     echo "Checking dependencies:"
 
-    mpd --version >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then echo "mpd not installed. Please install it and try again." exit 1
+    if [[ $(mpd --version >/dev/null 2>&1) -ne 0 ]]; then
+        echo "mpd not installed. Please install it and try again."
+        exit 1
     else
         echo -n "mpd found..."
     fi
 
-    mpc help >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
+    if [[ $(mpc help >/dev/null 2>&1) -ne 0 ]]; then
         echo "mpc not installed. Please install it and try again."
         exit 1
     else
         echo -n "mpc found..."
     fi
 
-    notify-send -v >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
+    
+    if [[ $(notify-send -v >/dev/null 2>&1) -ne 0 ]]; then
         echo "Notify-send not installed. Please install it and try again."
         exit 1
     else
         echo -n "notify-send found..."
     fi
 
-    identify --version >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
+    
+    if [[ $(identify --version >/dev/null 2>&1) -ne 0 ]]; then
         echo "ImageMagick not installed. It is necessary for setting wallpaper. If you wish to enable this function please install it and try again."
     else
         echo -n "imagemagick found..."
     fi
-
-    feh --version >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
+    
+    if [[ $(feh --version >/dev/null 2>&1) -ne 0 ]]; then
         echo "feh not installed. It is necessary for setting wallpaper. If you wish to enable this function please install it and try again."
     else
         echo -n "imagemagick found..."
     fi
 
     #Check if python3 installed
-    python3 --version >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
+    
+    if [[ $(python3 --version >/dev/null 2>&1) -ne 0 ]]; then
         echo "Python3 is not installed. It is necessary for auto-fetching artwork."
         echo "If you wish to enable that functionality, please install Python3 and run this again."
     else
@@ -56,11 +56,11 @@ else
     fi
 
     # Check if requests is installed
-    pip3 show requests >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then # Either pip3 isn't installed or requests isn't installed.
+    
+    if [[ $(pip3 show requests >/dev/null 2>&1) -ne 0 ]]; then # Either pip3 isn't installed or requests isn't installed.
         # Check if pip3 is installed
-        pip3 --version >/dev/null 2>&1
-        if [[ $? -ne 0 ]]; then
+        
+        if [[ $(pip3 --version >/dev/null 2>&1) -ne 0 ]]; then
             echo "ERROR: Pip3 is not installed. It is necessary for auto-fetching artwork."
             echo "If you wish to enable that functionality, please install Pip3 and run this again."
         else
@@ -70,9 +70,7 @@ else
             if [[ -z $response || $response == "Y" || $response == "y" ]]; then
                 echo -n "sudo -H pip3 install requests >/dev/null 2>&1"
                 read
-                sudo -H pip3 install requests >/dev/null 2>&1
-                # sudo -H pip3 install requests >/dev/null 2>&1
-                if [[ $? -eq 0 ]]; then
+                if [[ $(sudo -H pip3 install requests >/dev/null 2>&1) -eq 0 ]]; then
                     echo "Requests installed, proceeding."
                 else
                     echo "Requests is not installed. It is necessary for auto-fetching artwork."
@@ -97,17 +95,10 @@ else
     cp -p mpd-notify-daemon.sh $APP
     cp -p cogsCover.py $APP
 
-    #if there's already something in the bin location, delete it
-    if [[ -e $BINLOC ]]; then
-        echo ""
-        sudo rm $BINLOC
-        sudo ln -s "$APP"mpd-notify-daemon.sh $BINLOC
-    else
-        #make a softlink from the app location to the bin location
-        echo ""
-        sudo ln -s "$APP"mpd-notify-daemon.sh $BINLOC
-    fi
-
+    echo ""
+    echo "Making symlink to $BINLOC..."
+    sudo rm $BINLOC
+    sudo ln -s "$APP"mpd-notify-daemon.sh $BINLOC
 
     if ! [[ -e $CONFIG ]]; then
         echo "Copying config..."

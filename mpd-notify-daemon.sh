@@ -50,7 +50,6 @@ startDaemon () {
 
 stopDaemon () {
     if [[ "`checkDaemon`" -eq 0 ]]; then
-        echo here
         echo " ERROR: $daemonName is not running."
         exit 1
     fi
@@ -139,6 +138,8 @@ loop () {
 
     # Get the path of the currently playing song as well as the cover.
     albumPath=`getFile | sed -r 's/\/[^/]*$//'`"/"
+    albumPath="$(mpc -p $PORT -f %file% | head -n 1)"
+
 
     notifyStatus
     notifySong

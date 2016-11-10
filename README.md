@@ -2,7 +2,7 @@
 + Notifications on song change, play, and pause.
 + Automatic cover art detection\*
 + Automatic cover art fetching
-+ Updates wallpaper on song change
++ Updates wallpaper on song change (tiled or centered.)
 + Volume notifier
 + Daemon
 
