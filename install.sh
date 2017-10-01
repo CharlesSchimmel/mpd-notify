@@ -2,7 +2,6 @@
 APP=$HOME/.mpd-notify/
 CONFIG="$APP"mpd-notify.cfg
 BINLOC=/usr/local/bin/mpd-notify
-OPT=/opt/mpd-notify
 
 if [ "$(id -u)" == "0" ]; then
 	echo "Don't use sudo for this script or it'll install into root's HOME"

@@ -112,7 +112,7 @@ checkDaemon() {
 loop () {
     # Just get the song title and artist.
     currentSong=`mpc -p $PORT`
-    currTitleArtist=`getFirst "$currentSong"`
+    currTitleArtist="$(mpc -p $PORT | head -n 1)"
 
     # Via mpc call and awk, get the status of mpd. For some reason, comparing the two as strings would not work. Converting their status to integers and comparing those, does.
     if [[ `echo "$currentSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[playing]" ]]; then
@@ -127,19 +127,19 @@ loop () {
     sleep 1
 
     newSong=`mpc -p $PORT`
-    newTitleArtist=`getFirst "$newSong"`
+    newTitleArtist="$(mpc -p $PORT | head -n 1)"
 
     if [[ `echo "$newSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[playing]" ]]; then
         newStatus=1
     elif [[ `echo "$newSong" | awk '/\[(paused|playing)\]/ {print $1}'` == "[paused]" ]]; then
         newStatus=0
     fi
+
     newVol=`echo "$newSong" | grep -o -E "volume.+?%" `
 
     # Get the path of the currently playing song as well as the cover.
     albumPath=`getFile | sed -r 's/\/[^/]*$//'`"/"
     albumPath="$(mpc -p $PORT -f %file% | head -n 1)"
-
 
     notifyStatus
     notifySong
